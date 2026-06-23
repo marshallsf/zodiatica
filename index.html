@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ZODIATICA — An Astrology Card Game</title>
+  <link rel="stylesheet" href="zodiatica.css" />
+</head>
+<body>
+
+  <!-- SETUP -->
+  <section id="setup">
+    <h1 class="brand">ZODIATICA</h1>
+    <p class="tagline">An Astrology Card Game</p>
+
+    <div class="field">
+      <label for="player-name">Player 1 name</label>
+      <input id="player-name" type="text" placeholder="Stargazer" maxlength="14" />
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label for="human-count">Humans (pass &amp; play)</label>
+        <select id="human-count">
+          <option value="1" selected>1 human</option>
+          <option value="2">2 humans</option>
+          <option value="3">3 humans</option>
+          <option value="4">4 humans</option>
+          <option value="5">5 humans</option>
+          <option value="6">6 humans</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="ai-count">AI opponents</label>
+        <select id="ai-count">
+          <option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2" selected>2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+      </div>
+    </div>
+
+    <label class="check"><input type="checkbox" id="guided" /> Guided mode — show match hints</label>
+    <p id="setup-warn" class="warn hidden"></p>
+
+    <div class="setup-btns">
+      <button id="start-btn" class="btn">Deal the cards ✦</button>
+      <button id="learn-btn" class="btn ghost">Learn the cosmos ☾</button>
+    </div>
+
+    <div class="rules">
+      <b>How to play:</b> Match the center card by any shared <b>Sign, Planet,
+      Element, or Mode</b>. Retrograde cards reverse the turn order. Element &amp;
+      Mode cards (and Planet&nbsp;X) are <b>wild</b> — play one anytime, then play
+      one more card. First to empty their hand wins.
+    </div>
+  </section>
+
+  <!-- TABLE -->
+  <section id="table" class="hidden">
+    <button id="mute-btn" class="icon-btn" title="Mute / unmute">🔊</button>
+
+    <div id="opponents"></div>
+
+    <div class="center-row">
+      <div class="pile" id="deck-pile">
+        <div class="pile-label">Draw</div>
+        <div class="deck-back"><span id="deck-count">0</span></div>
+      </div>
+      <div class="pile">
+        <div class="pile-label">Discard</div>
+        <div id="discard"></div>
+        <div id="discard-chips" class="chips target"></div>
+      </div>
+    </div>
+
+    <div class="status">
+      <span id="turn-indicator"></span>
+      <span id="active-tag"></span>
+      <span id="bonus-hint" class="hidden">★ Bonus: play another card, or skip.</span>
+    </div>
+
+    <div id="guide-hint" class="guide-hint hidden"></div>
+
+    <div class="controls">
+      <button id="draw-btn" class="btn">Draw card</button>
+      <button id="pass-btn" class="btn ghost">Pass</button>
+    </div>
+
+    <div id="log"></div>
+
+    <div class="hand-label" id="hand-label">Your hand</div>
+    <div id="hand"></div>
+
+    <div id="chip-legend">
+      <span class="legend-title">Chips:</span>
+      <span class="chip chip-sign">Sign</span>
+      <span class="chip chip-planet">Planet</span>
+      <span class="chip chip-element">Element</span>
+      <span class="chip chip-mode">Mode</span>
+      <span class="chip chip-group">☀☾ Group</span>
+      <span class="chip wildchip">Wild ✦</span>
+      <span class="legend-note">glowing chip = matches the pile</span>
+    </div>
+  </section>
+
+  <!-- Pass-the-device gate (hot-seat) -->
+  <div id="pass-gate" class="overlay hidden">
+    <div class="modal">
+      <h2>✦</h2>
+      <p>Pass the device to</p>
+      <div id="pass-name" class="big-name"></div>
+      <p class="muted">Make sure no one else is peeking.</p>
+      <button id="reveal-btn" class="btn">Reveal my hand</button>
+    </div>
+  </div>
+
+  <!-- Planet X element chooser -->
+  <div id="element-modal" class="overlay hidden">
+    <div class="modal">
+      <h2>Planet X</h2>
+      <p>The unknown planet bends the cosmos. Choose the new element:</p>
+      <div class="el-buttons">
+        <button class="btn" data-el="fire">🔥 Fire</button>
+        <button class="btn" data-el="water">💧 Water</button>
+        <button class="btn" data-el="air">🌬️ Air</button>
+        <button class="btn" data-el="earth">🌍 Earth</button>
+        <button class="btn" data-el="spirit">✨ Spirit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Learn / GUIDE overlay -->
+  <div id="learn-modal" class="overlay hidden">
+    <div class="modal wide">
+      <h2>The Cosmos, briefly ☾</h2>
+      <p class="muted">Every sign answers to a <b>planet</b>, an <b>element</b>, and a <b>mode</b>.
+        Two cards match if they share <i>any</i> of these.</p>
+      <table id="guide-table"></table>
+      <div class="legend">
+        <span><b>Elements</b> 🔥 Fire · 💧 Water · 🌬️ Air · 🌍 Earth · ✨ Spirit</span>
+        <span><b>Modes</b> Cardinal (starters) · Fixed (sustainers) · Mutable (adapters)</span>
+        <span><b>Wilds</b> Elements, Modes &amp; Planet X — play anytime, then play one more.</span>
+      </div>
+      <button id="learn-close" class="btn">Got it ✦</button>
+    </div>
+  </div>
+
+  <!-- Win screen -->
+  <div id="winscreen" class="overlay hidden">
+    <div id="confetti"></div>
+    <div class="modal">
+      <h2>✦ ✦ ✦</h2>
+      <div id="win-text"></div>
+      <button id="again-btn" class="btn">Play again</button>
+    </div>
+  </div>
+
+  <script src="cards.js"></script>
+  <script src="audio.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
