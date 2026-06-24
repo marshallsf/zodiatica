@@ -53,6 +53,13 @@
     </div>
 
     <label class="check"><input type="checkbox" id="guided" /> Guided mode — show match hints</label>
+
+    <div id="newbie">
+      <div class="newbie-text">✨ <b>New to astrology?</b> No problem — jump in with on-screen
+        hints and one easy opponent. You'll learn as you play.</div>
+      <button id="quickstart-btn" class="btn">Quick Start ▶</button>
+    </div>
+
     <p id="setup-warn" class="warn hidden"></p>
 
     <div class="setup-btns">
@@ -70,6 +77,7 @@
 
   <!-- TABLE -->
   <section id="table" class="hidden">
+    <div id="table-wheel" aria-hidden="true"></div>
     <button id="mute-btn" class="icon-btn" title="Mute / unmute">🔊</button>
     <button id="help-btn" class="icon-btn" title="How to play">?</button>
     <div id="match-banner" aria-live="polite"></div>

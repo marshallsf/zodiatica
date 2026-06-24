@@ -581,19 +581,16 @@ function buildGuideTable() {
     ).join("");
 }
 
-// Decorative rotating zodiac wheel behind the title (SVG, echoes the box art)
-function buildZodiacWheel() {
-  const host = document.getElementById("zodiac-wheel");
-  if (!host) return;
+// Decorative rotating zodiac wheel SVG (echoes the box art) — used behind the
+// title and, faintly, behind the game table.
+function zodiacWheelSVG() {
   const glyphs = ["♈","♉","♊","♋","♌","♍","♎","♏","♐","♑","♒","♓"];
-  const cx = 200, cy = 200, R = 200;
+  const cx = 200, cy = 200;
   const parts = [];
-  // concentric rings
   parts.push(`<circle cx="${cx}" cy="${cy}" r="196" class="zw-ring"/>`);
   parts.push(`<circle cx="${cx}" cy="${cy}" r="150" class="zw-ring2"/>`);
   parts.push(`<circle cx="${cx}" cy="${cy}" r="120" class="zw-ring"/>`);
   parts.push(`<circle cx="${cx}" cy="${cy}" r="58" class="zw-ring2"/>`);
-  // 12 sign badges around the rim + spokes
   for (let i = 0; i < 12; i++) {
     const a = (i / 12) * 2 * Math.PI - Math.PI / 2;
     const x = cx + 173 * Math.cos(a), y = cy + 173 * Math.sin(a);
@@ -602,10 +599,16 @@ function buildZodiacWheel() {
     parts.push(`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="20" class="zw-badge"/>`);
     parts.push(`<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" class="zw-glyph">${glyphs[i]}</text>`);
   }
-  // center symbol
   parts.push(`<text x="${cx}" y="${cy}" class="zw-center">☯</text>`);
-  host.innerHTML =
-    `<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">${parts.join("")}</svg>`;
+  return `<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">${parts.join("")}</svg>`;
+}
+
+function buildZodiacWheel() {
+  const svg = zodiacWheelSVG();
+  for (const id of ["zodiac-wheel", "table-wheel"]) {
+    const host = document.getElementById(id);
+    if (host) host.innerHTML = svg;
+  }
 }
 
 /* ---- Setup wiring ---- */
@@ -613,7 +616,7 @@ window.addEventListener("DOMContentLoaded", () => {
   buildGuideTable();
   buildZodiacWheel();
 
-  document.getElementById("start-btn").onclick = () => {
+  function beginFromSetup() {
     const humans = parseInt(document.getElementById("human-count").value, 10);
     const ai = parseInt(document.getElementById("ai-count").value, 10);
     const total = humans + ai;
@@ -627,6 +630,16 @@ window.addEventListener("DOMContentLoaded", () => {
     Audio.init(); // user gesture -> audio allowed
     Audio.resume();
     startGame(humans, ai, name, guided, difficulty);
+  }
+  document.getElementById("start-btn").onclick = beginFromSetup;
+
+  // "New to astrology?" quick start: 1 human vs 1 easy AI, hints on.
+  document.getElementById("quickstart-btn").onclick = () => {
+    document.getElementById("human-count").value = "1";
+    document.getElementById("ai-count").value = "1";
+    document.getElementById("ai-difficulty").value = "easy";
+    document.getElementById("guided").checked = true;
+    beginFromSetup();
   };
 
   const openHelp = () => document.getElementById("learn-modal").classList.remove("hidden");

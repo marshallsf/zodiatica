@@ -403,3 +403,36 @@ h1, h2 { font-weight: 800; letter-spacing: 2px; }
 .help-legend { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0; }
 .help-legend .chip { font-size: 11px; padding: 3px 8px; }
 .credits { text-align: center; color: #9c8fc4; font-size: 12px; margin: 16px 0 4px; }
+
+/* ---------- "New to astrology?" quick-start callout ---------- */
+#newbie {
+  display: flex; align-items: center; gap: 12px;
+  margin: 16px 0 4px; padding: 12px 14px; border-radius: 14px;
+  background: linear-gradient(135deg, rgba(95,224,255,0.13), rgba(255,196,84,0.13));
+  border: 1px solid rgba(95,224,255,0.45);
+  animation: newbiePulse 2.8s ease-in-out infinite;
+}
+.newbie-text { flex: 1; text-align: left; font-size: 13px; line-height: 1.45; color: #eaf6ff; }
+.newbie-text b { color: var(--cyan); }
+#newbie .btn {
+  white-space: nowrap; padding: 11px 16px; font-size: 14px;
+  background: linear-gradient(135deg, var(--cyan), #3aa6ff); color: #04243a;
+}
+@keyframes newbiePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(95,224,255,0.0); }
+  50%      { box-shadow: 0 0 16px 2px rgba(95,224,255,0.38); }
+}
+
+/* ---------- Wheel motif behind the game table ---------- */
+#table-wheel {
+  position: absolute; left: 50%; top: 46%;
+  transform: translate(-50%, -50%);
+  width: min(82vw, 780px); height: min(82vw, 780px);
+  z-index: -1; opacity: 0.09; pointer-events: none;
+}
+#table-wheel svg { width: 100%; height: 100%; transform-origin: 50% 50%; animation: wheelspin 220s linear infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  #zodiac-wheel svg, #table-wheel svg { animation: none; }
+  #newbie { animation: none; }
+}
