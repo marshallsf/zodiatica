@@ -1,6 +1,6 @@
-# ZODIATICA — An Astrology Card Game
+# Quest to Zodiatica — An Astrology Card Game
 
-A browser version of the ZODIATICA card game: an UNO-style matching game where
+A browser version of the Zodiatica card game: an UNO-style matching game where
 you shed your hand by matching the top card on any shared **Sign, Planet,
 Element, or Mode** (shown as each card's center subject + two corner badges).
 

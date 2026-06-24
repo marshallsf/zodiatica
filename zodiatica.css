@@ -58,10 +58,17 @@ h1, h2 { font-weight: 800; letter-spacing: 2px; }
   box-shadow: 0 10px 40px rgba(0,0,0,0.5);
 }
 .brand {
-  font-size: 42px; margin: 0 0 4px;
+  font-size: 46px; margin: 0 0 4px; line-height: 1.02;
   background: linear-gradient(#fff, #d9b3ff);
   -webkit-background-clip: text; background-clip: text; color: transparent;
   text-shadow: 0 0 24px rgba(179,136,255,0.5);
+}
+.brand-pre {
+  display: block;
+  font-size: 0.4em; font-weight: 700; letter-spacing: 7px;
+  text-transform: uppercase; margin-bottom: 2px;
+  color: var(--gold); -webkit-text-fill-color: var(--gold);
+  text-shadow: 0 0 16px rgba(255,196,84,0.55);
 }
 .tagline { color: var(--gold); margin: 0 0 24px; letter-spacing: 1px; }
 .field { margin: 14px 0; text-align: left; }
