@@ -581,9 +581,37 @@ function buildGuideTable() {
     ).join("");
 }
 
+// Decorative rotating zodiac wheel behind the title (SVG, echoes the box art)
+function buildZodiacWheel() {
+  const host = document.getElementById("zodiac-wheel");
+  if (!host) return;
+  const glyphs = ["♈","♉","♊","♋","♌","♍","♎","♏","♐","♑","♒","♓"];
+  const cx = 200, cy = 200, R = 200;
+  const parts = [];
+  // concentric rings
+  parts.push(`<circle cx="${cx}" cy="${cy}" r="196" class="zw-ring"/>`);
+  parts.push(`<circle cx="${cx}" cy="${cy}" r="150" class="zw-ring2"/>`);
+  parts.push(`<circle cx="${cx}" cy="${cy}" r="120" class="zw-ring"/>`);
+  parts.push(`<circle cx="${cx}" cy="${cy}" r="58" class="zw-ring2"/>`);
+  // 12 sign badges around the rim + spokes
+  for (let i = 0; i < 12; i++) {
+    const a = (i / 12) * 2 * Math.PI - Math.PI / 2;
+    const x = cx + 173 * Math.cos(a), y = cy + 173 * Math.sin(a);
+    const sx = cx + 120 * Math.cos(a), sy = cy + 120 * Math.sin(a);
+    parts.push(`<line x1="${sx.toFixed(1)}" y1="${sy.toFixed(1)}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" class="zw-spoke"/>`);
+    parts.push(`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="20" class="zw-badge"/>`);
+    parts.push(`<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" class="zw-glyph">${glyphs[i]}</text>`);
+  }
+  // center symbol
+  parts.push(`<text x="${cx}" y="${cy}" class="zw-center">☯</text>`);
+  host.innerHTML =
+    `<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">${parts.join("")}</svg>`;
+}
+
 /* ---- Setup wiring ---- */
 window.addEventListener("DOMContentLoaded", () => {
   buildGuideTable();
+  buildZodiacWheel();
 
   document.getElementById("start-btn").onclick = () => {
     const humans = parseInt(document.getElementById("human-count").value, 10);
@@ -601,10 +629,12 @@ window.addEventListener("DOMContentLoaded", () => {
     startGame(humans, ai, name, guided, difficulty);
   };
 
-  document.getElementById("learn-btn").onclick = () =>
-    document.getElementById("learn-modal").classList.remove("hidden");
-  document.getElementById("learn-close").onclick = () =>
-    document.getElementById("learn-modal").classList.add("hidden");
+  const openHelp = () => document.getElementById("learn-modal").classList.remove("hidden");
+  const closeHelp = () => document.getElementById("learn-modal").classList.add("hidden");
+  document.getElementById("learn-btn").onclick = openHelp;
+  document.getElementById("help-btn").onclick = openHelp;
+  document.getElementById("learn-close").onclick = closeHelp;
+  document.getElementById("learn-close-x").onclick = closeHelp;
 
   document.getElementById("draw-btn").onclick = onDraw;
   document.getElementById("pass-btn").onclick = onPass;

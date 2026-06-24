@@ -10,6 +10,7 @@
 
   <!-- SETUP -->
   <section id="setup">
+    <div id="zodiac-wheel" aria-hidden="true"></div>
     <h1 class="brand"><span class="brand-pre">Quest to</span>Zodiatica</h1>
     <p class="tagline">An Astrology Card Game</p>
 
@@ -56,7 +57,7 @@
 
     <div class="setup-btns">
       <button id="start-btn" class="btn">Deal the cards ✦</button>
-      <button id="learn-btn" class="btn ghost">Learn the cosmos ☾</button>
+      <button id="learn-btn" class="btn ghost">How to play ☾</button>
     </div>
 
     <div class="rules">
@@ -70,6 +71,7 @@
   <!-- TABLE -->
   <section id="table" class="hidden">
     <button id="mute-btn" class="icon-btn" title="Mute / unmute">🔊</button>
+    <button id="help-btn" class="icon-btn" title="How to play">?</button>
     <div id="match-banner" aria-live="polite"></div>
 
     <div id="opponents"></div>
@@ -146,18 +148,140 @@
     </div>
   </div>
 
-  <!-- Learn / GUIDE overlay -->
+  <!-- How to play / detailed help overlay -->
   <div id="learn-modal" class="overlay hidden">
-    <div class="modal wide">
-      <h2>The Cosmos, briefly ☾</h2>
-      <p class="muted">Every sign answers to a <b>planet</b>, an <b>element</b>, and a <b>mode</b>.
-        Two cards match if they share <i>any</i> of these.</p>
-      <table id="guide-table"></table>
-      <div class="legend">
-        <span><b>Elements</b> 🔥 Fire · 💧 Water · 🌬️ Air · 🌍 Earth · ✨ Spirit</span>
-        <span><b>Modes</b> Cardinal (starters) · Fixed (sustainers) · Mutable (adapters)</span>
-        <span><b>Wilds</b> Elements, Modes &amp; Planet X — play anytime, then play one more.</span>
+    <div class="modal help">
+      <button id="learn-close-x" class="modal-x" title="Close">✕</button>
+      <h2>How to Play <span class="muted">— Quest to Zodiatica</span></h2>
+
+      <div class="help-scroll">
+
+        <section class="help-sec">
+          <h3>🎯 The Goal</h3>
+          <p>Be the <b>first player to get rid of all your cards</b>. On your turn you
+          play one card from your hand onto the discard pile by <b>matching</b> it to the
+          card on top. Can't match? You draw. Empty your hand and you win.</p>
+        </section>
+
+        <section class="help-sec">
+          <h3>👥 Setup</h3>
+          <ul>
+            <li><b>2–6 players</b> — any mix of humans and AI.</li>
+            <li>Each player is dealt <b>5 cards</b>; one card is flipped face-up to start the discard pile.</li>
+            <li>The rest form the draw pile. When it runs out, the discard is reshuffled automatically.</li>
+          </ul>
+        </section>
+
+        <section class="help-sec">
+          <h3>🃏 How matching works — the heart of the game</h3>
+          <p>Every card shows up to <b>three icons</b> you can match on:
+          its <b>center subject</b> and its <b>two top-corner badges</b>. Each icon is a
+          <b>Sign</b>, <b>Planet</b>, <b>Element</b>, or <b>Mode</b>.</p>
+          <p>Your card is <b>playable if it shares at least one icon</b> with the top card
+          of the pile. For example, if the pile shows
+          <span class="ic">Aries</span><span class="ic">Taurus</span><span class="ic">Saturn</span>,
+          you can play any card that shows Aries, Taurus, <i>or</i> Saturn anywhere on it.</p>
+          <p class="tip">💡 This is exactly how the physical deck plays — match by the corners
+          and center, not by astrological rules. The badges are printed on each card.</p>
+        </section>
+
+        <section class="help-sec">
+          <h3>🎟️ Reading the chips</h3>
+          <p>To make matches obvious, each card shows little <b>chips</b> for its icons.
+          The chips under the <b>discard pile</b> are what you must match. On your hand cards:</p>
+          <ul>
+            <li>A chip that <b>glows cyan</b> = it matches the pile (this card is playable).</li>
+            <li><b>Faded</b> chips = don't match. If all of a card's chips are faded, you can't play it.</li>
+            <li>A gold <b>WILD ✦</b> chip = a wild card (always playable).</li>
+          </ul>
+          <div class="help-legend">
+            <span class="chip chip-sign">Sign</span>
+            <span class="chip chip-planet">Planet</span>
+            <span class="chip chip-element">Element</span>
+            <span class="chip chip-mode">Mode</span>
+            <span class="chip chip-group">☀☾ Group</span>
+            <span class="chip wildchip">Wild ✦</span>
+          </div>
+        </section>
+
+        <section class="help-sec">
+          <h3>☀ ☾ Special matches</h3>
+          <p>Some cards form their own families that always match each other, even if their
+          badges differ:</p>
+          <ul>
+            <li><b>Sun group</b> — Sun, Solar Eclipse, Sunrise, and Sunset all match one another.</li>
+            <li><b>Moon group</b> — Moon, Full Moon, Void Moon, Moon Signs, and Lunar Eclipse all match.</li>
+            <li><b>Rising Sign</b> — a connector card; play it off either of its two badges.</li>
+          </ul>
+        </section>
+
+        <section class="help-sec">
+          <h3>✦ Wild cards (Elements &amp; Modes)</h3>
+          <p>The 5 <b>Elements</b> (Fire, Water, Air, Earth, Spirit) and 3 <b>Modes</b>
+          (Cardinal, Fixed, Mutable) are <b>wild</b>: you can play one on <i>any</i> card,
+          even when nothing else matches.</p>
+          <ul>
+            <li>When you play a wild, it <b>sets the new thing to match</b> — its element or mode.</li>
+            <li><b>Bonus:</b> right after a wild, you may <b>immediately play one more card</b>
+            from your hand (or skip). Great for dumping a stubborn card.</li>
+          </ul>
+        </section>
+
+        <section class="help-sec">
+          <h3>↩️ Retrograde cards</h3>
+          <p>The 8 planet <b>Retrograde</b> cards play like their planet, but also
+          <b>reverse the turn order</b> — a little Mercury-retrograde chaos. With 2 players
+          that simply bounces play back and forth.</p>
+        </section>
+
+        <section class="help-sec">
+          <h3>🪐 Planet X</h3>
+          <p>Planet X is a normal card (not wild) — match it by its printed badges. Several
+          other cards carry a “Planet X” badge, so it connects in surprising places.</p>
+        </section>
+
+        <section class="help-sec">
+          <h3>🔄 When you can't match</h3>
+          <p>Press <b>Draw card</b> to take one from the pile. If the drawn card matches you
+          may play it right away; otherwise press <b>Pass</b> and play moves on.</p>
+        </section>
+
+        <section class="help-sec">
+          <h3>🏆 Winning</h3>
+          <p>The moment you play your <b>last card</b>, you win and the cosmos celebrates.
+          (Down to one card? Everyone gets a heads-up in the log.)</p>
+        </section>
+
+        <section class="help-sec">
+          <h3>🎛️ Controls &amp; options</h3>
+          <ul>
+            <li><b>Draw / Pass</b> — your turn actions.</li>
+            <li><b>🔊 (top-right)</b> — mute or unmute music &amp; sound.</li>
+            <li><b>Guided mode</b> — highlights playable cards and shows a hint each turn. Great for learning.</li>
+            <li><b>AI difficulty</b> — Easy (careless), Normal (saves wilds), Hard (saves wilds &amp; plans its hand).</li>
+            <li><b>Hot-seat</b> — with 2+ humans, a “pass the device” screen hides each hand between turns.</li>
+          </ul>
+        </section>
+
+        <section class="help-sec">
+          <h3>🧠 Tips</h3>
+          <ul>
+            <li>Hold your <b>wild</b> cards for when you're truly stuck — they're your escape hatch.</li>
+            <li>Play <b>hard-to-match</b> cards early; keep flexible, well-connected cards for later.</li>
+            <li>Use a wild's <b>bonus play</b> to offload a card that shares nothing with the pile.</li>
+          </ul>
+        </section>
+
+        <section class="help-sec">
+          <h3>📖 Astrology reference</h3>
+          <p class="muted">Not needed to play, but if you're curious — this is what each sign
+          traditionally rules. (In-game matching uses the printed badges, not this table.)</p>
+          <table id="guide-table"></table>
+        </section>
+
+        <p class="credits">Card art © 2026 Soothsayers · Ages 14+ · 2–6 players</p>
       </div>
+
       <button id="learn-close" class="btn">Got it ✦</button>
     </div>
   </div>
