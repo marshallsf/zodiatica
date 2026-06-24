@@ -12,6 +12,8 @@
 
 * { box-sizing: border-box; }
 
+html { background: #1a0b2e; }
+
 body {
   margin: 0;
   font-family: "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
