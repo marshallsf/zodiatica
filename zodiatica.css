@@ -4,6 +4,8 @@
   --bg3: #4a1a5c;
   --accent: #b388ff;
   --gold: #ffd86b;
+  --gold-deep: #ffc454;
+  --cyan: #5fe0ff;
   --green: #7CFC00;
   --panel: rgba(20, 10, 40, 0.6);
 }
@@ -138,8 +140,14 @@ h1, h2 { font-weight: 800; letter-spacing: 2px; }
   border: 2px solid transparent;
 }
 .card img { width:100%; height:100%; object-fit: cover; display:block; }
-.card.playable { border-color: var(--green); }
-.card.playable:hover { transform: translateY(-12px) scale(1.04); box-shadow: 0 14px 30px rgba(124,252,0,0.3); }
+.card.playable {
+  border-color: var(--gold-deep);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.5), 0 0 14px rgba(255,196,84,0.55);
+}
+.card.playable:hover {
+  transform: translateY(-12px) scale(1.04);
+  box-shadow: 0 14px 30px rgba(0,0,0,0.5), 0 0 26px rgba(255,196,84,0.85);
+}
 .card.dim { opacity: 0.45; cursor: not-allowed; }
 .card.shake { animation: shake .4s; }
 @keyframes shake {
@@ -219,11 +227,11 @@ h1, h2 { font-weight: 800; letter-spacing: 2px; }
 .chip-group   { background: #8350b8; }
 .chip-other   { background: #555; }
 .chip.match {
-  outline: 2px solid var(--green);
-  box-shadow: 0 0 9px rgba(124,252,0,0.85);
-  color: #eaffd6; animation: chipPulse 1.1s ease-in-out infinite;
+  outline: 2px solid var(--cyan);
+  box-shadow: 0 0 9px rgba(95,224,255,0.9);
+  color: #e6fbff; animation: chipPulse 1.1s ease-in-out infinite;
 }
-@keyframes chipPulse { 50% { box-shadow: 0 0 14px rgba(124,252,0,1); } }
+@keyframes chipPulse { 50% { box-shadow: 0 0 15px rgba(95,224,255,1); } }
 .chip.wildchip {
   background: linear-gradient(135deg, var(--gold), #ffb347);
   color: #3a2400; border-color: #fff;
@@ -274,4 +282,64 @@ h1, h2 { font-weight: 800; letter-spacing: 2px; }
 }
 @keyframes fall {
   to { transform: translateY(105vh) rotate(540deg); opacity: 0; }
+}
+
+/* ---------- Orbital ring around the discard (look & feel from the video) ---------- */
+.discard-wrap { position: relative; display: inline-block; }
+.orbit {
+  position: absolute; left: 50%; top: 50%;
+  width: 230px; height: 168px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  pointer-events: none; z-index: 0;
+  background: conic-gradient(from 0deg,
+    transparent 0 55%, rgba(255,196,84,0.95) 78%, rgba(255,234,180,1) 84%, transparent 92%);
+  -webkit-mask: radial-gradient(closest-side, transparent 0 70%, #000 72% 79%, transparent 81%);
+  mask: radial-gradient(closest-side, transparent 0 70%, #000 72% 79%, transparent 81%);
+  filter: drop-shadow(0 0 7px rgba(255,196,84,0.6));
+  animation: orbitspin 7s linear infinite;
+}
+.orbit.orbit2 {
+  width: 270px; height: 150px;
+  background: conic-gradient(from 180deg,
+    transparent 0 62%, rgba(95,224,255,0.85) 82%, transparent 92%);
+  filter: drop-shadow(0 0 6px rgba(95,224,255,0.55));
+  animation: orbitspin 11s linear infinite reverse;
+}
+@keyframes orbitspin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+#discard { position: relative; z-index: 1; }
+
+/* ---------- "…MATCH!" banner ---------- */
+#match-banner {
+  position: fixed; left: 50%; top: 19%;
+  transform: translateX(-50%) scale(0.7);
+  z-index: 8; pointer-events: none;
+  font-weight: 900; letter-spacing: 2px; text-transform: uppercase;
+  font-size: clamp(28px, 6vw, 56px);
+  opacity: 0; white-space: nowrap;
+}
+#match-banner.show { animation: bannerPop 1.3s cubic-bezier(.2,.8,.3,1) forwards; }
+#match-banner.match {
+  color: #fff;
+  text-shadow: 0 0 10px rgba(95,224,255,0.9), 0 0 22px rgba(95,224,255,0.7), 0 3px 6px #000;
+}
+#match-banner.wild {
+  color: var(--gold);
+  text-shadow: 0 0 12px rgba(255,196,84,0.95), 0 0 26px rgba(255,150,60,0.7), 0 3px 6px #000;
+}
+#match-banner.reverse {
+  color: #ff9bd0;
+  text-shadow: 0 0 12px rgba(255,120,200,0.95), 0 0 26px rgba(200,60,150,0.6), 0 3px 6px #000;
+}
+@keyframes bannerPop {
+  0%   { opacity: 0; transform: translateX(-50%) scale(0.6); }
+  18%  { opacity: 1; transform: translateX(-50%) scale(1.12); }
+  32%  { transform: translateX(-50%) scale(1.0); }
+  72%  { opacity: 1; transform: translateX(-50%) scale(1.0); }
+  100% { opacity: 0; transform: translateX(-50%) scale(1.04) translateY(-14px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbit { animation: none; }
+  #match-banner.show { animation-duration: 0.01s; }
 }

@@ -46,7 +46,7 @@ function shuffle(a) {
   return a;
 }
 
-function startGame(numHumans, numAI, firstName, guided) {
+function startGame(numHumans, numAI, firstName, guided, difficulty) {
   const deck = shuffle(buildDeck());
 
   const players = [];
@@ -73,6 +73,7 @@ function startGame(numHumans, numAI, firstName, guided) {
     revealed: false,
     multiHuman: numHumans > 1,
     guided: !!guided,
+    difficulty: difficulty || "normal",
     log: [],
   };
 
@@ -148,9 +149,13 @@ function showPassGate(p) {
 function playCard(player, card, chosenTag, fromRect) {
   const idx = player.hand.indexOf(card);
   if (idx === -1) return;
+  const prevActive = G.active; // what the card matched against (before we update)
   player.hand.splice(idx, 1);
   G.discard.push(card);
   G.active = activeTagsFor(card, chosenTag);
+
+  // "…MATCH!" banner pop-up (echoes the tutorial video)
+  announceMatch(card, chosenTag, prevActive);
 
   // audio
   if (card.wild) Audio.sfx.wild();
@@ -259,11 +264,43 @@ function aiPickElement(player) {
   return best ? best[0] : "fire";
 }
 
+// How many other cards in `hand` share a token with `c` (its future playability).
+function handConnectivity(c, hand) {
+  return hand.reduce(
+    (n, o) => (o !== c && !o.wild && o.tags.some((t) => c.tags.includes(t)) ? n + 1 : n),
+    0
+  );
+}
+
 function aiChoose(player) {
   const legal = legalCards(player);
   if (legal.length === 0) return null;
-  legal.sort((a, b) => (a.wild ? 1 : 0) - (b.wild ? 1 : 0)); // dump non-wilds first
-  return legal[0];
+  const diff = G.difficulty || "normal";
+
+  // EASY: careless — sometimes overlooks a play and draws, otherwise plays a
+  // random legal card (often wasting wilds). No planning.
+  if (diff === "easy") {
+    if (Math.random() < 0.22) return null; // missed a play -> will draw
+    return legal[Math.floor(Math.random() * legal.length)];
+  }
+
+  // Save wild cards as escape hatches when a normal card is playable.
+  const nonWild = legal.filter((c) => !c.wild);
+  const pool = nonWild.length ? nonWild : legal;
+
+  // HARD: shed the least-connected (hardest-to-play-later) card first,
+  // keeping a flexible hand. Ties broken by emptying larger token sets.
+  if (diff === "hard") {
+    pool.sort(
+      (a, b) =>
+        handConnectivity(a, player.hand) - handConnectivity(b, player.hand) ||
+        b.tags.length - a.tags.length
+    );
+    return pool[0];
+  }
+
+  // NORMAL: keep wilds, otherwise first available.
+  return pool[0];
 }
 
 function aiRect(seat) {
@@ -301,10 +338,10 @@ function aiExtraOrPass() {
   if (G.over) return;
   const p = current();
   if (p.human) return;
-  const legal = legalCards(p);
-  if (legal.length > 0) {
+  const choice = aiChoose(p);
+  if (choice) {
     G.pendingExtra = false;
-    playAI(p, legal[0]);
+    playAI(p, choice);
   } else {
     G.pendingExtra = false;
     advanceTurn();
@@ -448,6 +485,32 @@ function flashIllegal(card) {
   el.classList.add("shake");
 }
 
+/* ---- "…MATCH!" banner (look & feel from the tutorial video) ---- */
+function announceMatch(card, chosenTag, prevActive) {
+  const el = document.getElementById("match-banner");
+  if (!el) return;
+  let text, cls;
+  if (card.wild) {
+    text = `${tagLabel(chosenTag || card.setsTag)} Wild!`;
+    cls = "wild";
+  } else if (card.action === "reverse") {
+    text = "Retrograde!";
+    cls = "reverse";
+  } else {
+    const tok = sharedTag(card, prevActive);
+    if (!tok) return; // bonus play with no shared token — stay quiet
+    text = `${tagLabel(tok)} Match!`;
+    cls = "match";
+  }
+  el.textContent = text;
+  el.className = "show " + cls;
+  // restart the animation if it's already showing
+  void el.offsetWidth;
+  el.className = "show " + cls;
+  clearTimeout(announceMatch._t);
+  announceMatch._t = setTimeout(() => { el.className = ""; }, 1300);
+}
+
 /* ---- Flying card animation ---- */
 function animateToDiscard(card, fromRect) {
   const target = document.getElementById("discard");
@@ -532,9 +595,10 @@ window.addEventListener("DOMContentLoaded", () => {
     warn.classList.add("hidden");
     const name = document.getElementById("player-name").value.trim();
     const guided = document.getElementById("guided").checked;
+    const difficulty = document.getElementById("ai-difficulty").value;
     Audio.init(); // user gesture -> audio allowed
     Audio.resume();
-    startGame(humans, ai, name, guided);
+    startGame(humans, ai, name, guided, difficulty);
   };
 
   document.getElementById("learn-btn").onclick = () =>

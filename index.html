@@ -42,6 +42,15 @@
       </div>
     </div>
 
+    <div class="field">
+      <label for="ai-difficulty">AI difficulty</label>
+      <select id="ai-difficulty">
+        <option value="easy">Easy — plays randomly, wastes wilds</option>
+        <option value="normal" selected>Normal — saves wilds for when stuck</option>
+        <option value="hard">Hard — saves wilds &amp; plans its hand</option>
+      </select>
+    </div>
+
     <label class="check"><input type="checkbox" id="guided" /> Guided mode — show match hints</label>
     <p id="setup-warn" class="warn hidden"></p>
 
@@ -61,6 +70,7 @@
   <!-- TABLE -->
   <section id="table" class="hidden">
     <button id="mute-btn" class="icon-btn" title="Mute / unmute">🔊</button>
+    <div id="match-banner" aria-live="polite"></div>
 
     <div id="opponents"></div>
 
@@ -71,7 +81,11 @@
       </div>
       <div class="pile">
         <div class="pile-label">Discard</div>
-        <div id="discard"></div>
+        <div class="discard-wrap">
+          <div class="orbit" aria-hidden="true"></div>
+          <div class="orbit orbit2" aria-hidden="true"></div>
+          <div id="discard"></div>
+        </div>
         <div id="discard-chips" class="chips target"></div>
       </div>
     </div>
